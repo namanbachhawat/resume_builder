@@ -21,19 +21,21 @@ app.get('/', (req, res) => {
   res.json({ message: 'Resume Builder API is running!' });
 });
 
-// MongoDB Connection
+// Start server immediately (AI routes don't need MongoDB)
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+});
+
+// MongoDB Connection (non-blocking — server keeps running even if DB fails)
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/resumebuilder';
 
 mongoose
   .connect(MONGODB_URI)
   .then(() => {
     console.log('✅ MongoDB connected successfully');
-    const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
-    });
   })
   .catch((err) => {
-    console.error('❌ MongoDB connection error:', err.message);
-    process.exit(1);
+    console.error('⚠️  MongoDB connection failed:', err.message);
+    console.log('   AI routes will still work. Resume save/load requires MongoDB.');
   });

@@ -86,12 +86,8 @@ Edit `backend/.env`:
 PORT=5000
 MONGODB_URI=mongodb://localhost:27017/resumebuilder
 
-# Choose ONE AI provider:
-# Option A — OpenAI
-OPENAI_API_KEY=your_openai_api_key_here
-AI_PROVIDER=openai
 
-# Option B — Google Gemini
+# Google Gemini
 # GEMINI_API_KEY=your_gemini_api_key_here
 # AI_PROVIDER=gemini
 ```

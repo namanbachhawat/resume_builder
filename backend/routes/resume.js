@@ -1,6 +1,19 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const router = express.Router();
 const Resume = require('../models/Resume');
+
+// Middleware: check MongoDB connection before any resume operation
+router.use((req, res, next) => {
+    if (mongoose.connection.readyState !== 1) {
+        return res.status(503).json({
+            success: false,
+            error: 'Database is not connected. Please check MongoDB configuration.',
+            hint: 'The server is running but MongoDB authentication failed. Check your MONGODB_URI credentials.'
+        });
+    }
+    next();
+});
 
 // POST /api/resume/create
 router.post('/create', async (req, res) => {

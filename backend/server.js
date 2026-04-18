@@ -31,11 +31,25 @@ app.listen(PORT, () => {
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/resumebuilder';
 
 mongoose
-  .connect(MONGODB_URI)
+  .connect(MONGODB_URI, {
+    serverSelectionTimeoutMS: 15000,  // Give Atlas more time to respond
+    socketTimeoutMS: 45000,           // Socket timeout
+  })
   .then(() => {
     console.log('✅ MongoDB connected successfully');
   })
   .catch((err) => {
     console.error('⚠️  MongoDB connection failed:', err.message);
+    console.error('   Full error:', err.code || err.codeName || '');
     console.log('   AI routes will still work. Resume save/load requires MongoDB.');
+    console.log('   👉 If "bad auth", reset your password at MongoDB Atlas → Database Access');
   });
+
+// Listen for connection errors after initial connection
+mongoose.connection.on('error', (err) => {
+  console.error('MongoDB connection error:', err.message);
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.log('⚠️  MongoDB disconnected. Attempting to reconnect...');
+});
